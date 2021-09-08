@@ -1,15 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from './user.entity';
 import { UserDto } from './user.dto';
 
 @Injectable()
 export class UsersService {
   async create(userDto: UserDto): Promise<User> {
-    const user = User.create(userDto);
-    await user.save();
-    // delete user's password for the response
-    delete user.password;
-    return user;
+    try {
+      const user = User.create(userDto);
+      await user.save();
+      delete user.password;
+      return user;
+    } catch (error) {
+      if (error.errno === 1062) {
+        throw new ConflictException('Username already exists');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -23,6 +35,9 @@ export class UsersService {
 
   async showById(id: number): Promise<User> {
     const user = await this.findById(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found`);
+    }
     delete user.password;
     return user;
   }
