@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from './user.entity';
-import { UserDto } from './user.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -44,5 +44,17 @@ export class UsersService {
 
   async findById(id: number): Promise<User> {
     return await User.findOne(id);
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    const user = await User.findOne({
+      where: {
+        username: username,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
   }
 }

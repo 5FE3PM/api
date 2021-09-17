@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { UserDto } from './user.dto';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserDto } from './dto/user.dto';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
@@ -18,7 +19,7 @@ export class UsersController {
   }
 
   @Post()
-  create(@Body() createUserDto: UserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
+  createUser(@Body() userDto: UserDto) {
+    return this.usersService.create(userDto);
   }
 }
