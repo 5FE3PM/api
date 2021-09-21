@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { ClientsModule } from './clients/clients.module';
 
 const entities = [User];
 
@@ -26,6 +27,7 @@ const entities = [User];
     }),
     UsersModule,
     AuthModule,
+    ClientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
