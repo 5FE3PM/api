@@ -5,6 +5,15 @@ import { ClientDto } from './dto/client.dto';
 
 @Injectable()
 export class ClientsService {
+  async getAllClients(): Promise<Client[]> {
+    let clients = await Client.find({ relations: ['address'] });
+    clients = clients.map((client: Client) => {
+      delete client.password;
+      return client;
+    });
+    return clients;
+  }
+
   async create(clientDto: ClientDto): Promise<Client> {
     const clientAddress = Address.create({
       street: clientDto.street,
