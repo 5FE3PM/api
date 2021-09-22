@@ -11,6 +11,7 @@ import { AddressModule } from './address/address.module';
 // Entities
 import { User } from './users/user.entity';
 import { Address } from './address/address.entity';
+import { ClientsModule } from './clients/clients.module';
 
 const entities = [User, Address];
 
