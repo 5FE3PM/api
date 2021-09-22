@@ -11,9 +11,9 @@ import { AddressModule } from './address/address.module';
 // Entities
 import { User } from './users/user.entity';
 import { Address } from './address/address.entity';
-import { ClientsModule } from './clients/clients.module';
+import { Client } from './clients/client.entity';
 
-const entities = [User, Address];
+const entities = [User, Address, Client];
 
 @Module({
   imports: [
