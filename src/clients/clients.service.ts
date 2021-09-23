@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Address } from 'src/address/address.entity';
 import { Client } from './client.entity';
 import { ClientDto } from './dto/client.dto';
+import { UpdateClientDto } from './dto/update-client.dto';
 
 @Injectable()
 export class ClientsService {
@@ -15,10 +16,7 @@ export class ClientsService {
   }
 
   async getClientById(id: number) {
-    const client = await Client.findOne(id, { relations: ['address'] });
-    if (!client) {
-      throw new NotFoundException();
-    }
+    const client = await this.findById(id);
     delete client.password;
     return client;
   }
@@ -33,6 +31,37 @@ export class ClientsService {
     const client = Client.create({ ...clientDto, address: clientAddress });
     await client.save();
     delete client.password;
+    return client;
+  }
+
+  async update(id: number, updateClientDto: UpdateClientDto): Promise<Client> {
+    const client = await this.findById(id);
+
+    // find the address to update
+    const address = await Address.findOne(client.address.id);
+    address.street = updateClientDto.street;
+    address.subdivision = updateClientDto.subdivision;
+    address.region = updateClientDto.region;
+    await address.save();
+
+    // update the client
+    client.fullname = updateClientDto.fullname;
+    client.email = updateClientDto.email;
+    client.phone = updateClientDto.phone;
+    client.validated = updateClientDto.validated;
+    await client.save();
+    return await this.findById(id);
+  }
+
+  private async findById(id: number) {
+    // find the client to get the address id
+    const client = await Client.findOne(id, { relations: ['address'] });
+
+    // if user was not found, then throw a not found exception
+    if (!client) {
+      throw new NotFoundException(`Client with id "${id} not found"`);
+    }
+
     return client;
   }
 }
