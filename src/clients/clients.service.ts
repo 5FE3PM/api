@@ -53,15 +53,23 @@ export class ClientsService {
     return await this.findById(id);
   }
 
-  private async findById(id: number) {
+  private async findById(id: number): Promise<Client> {
     // find the client to get the address id
     const client = await Client.findOne(id, { relations: ['address'] });
 
     // if user was not found, then throw a not found exception
     if (!client) {
-      throw new NotFoundException(`Client with id "${id} not found"`);
+      throw new NotFoundException(`Client with id ${id} not found`);
     }
 
     return client;
+  }
+
+  async delete(id: number): Promise<{ message: string }> {
+    const client = await this.findById(id);
+    await Client.delete(client);
+    return {
+      message: 'Client deleted',
+    };
   }
 }
