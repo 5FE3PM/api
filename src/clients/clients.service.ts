@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Address } from 'src/address/address.entity';
 import { Client } from './client.entity';
 import { ClientDto } from './dto/client.dto';
@@ -12,6 +12,15 @@ export class ClientsService {
       return client;
     });
     return clients;
+  }
+
+  async getClientById(id: number) {
+    const client = await Client.findOne(id, { relations: ['address'] });
+    if (!client) {
+      throw new NotFoundException();
+    }
+    delete client.password;
+    return client;
   }
 
   async create(clientDto: ClientDto): Promise<Client> {
