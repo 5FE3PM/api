@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ProvidersService } from './providers.service';
 import { CreateProviderDto } from './dto/create-provider.dto';
 
@@ -9,6 +9,11 @@ export class ProvidersController {
   @Get()
   index() {
     return this.providersService.getAllProviders();
+  }
+
+  @Get(':id')
+  show(@Param('id') id: string) {
+    return this.providersService.getProviderById(Number(id));
   }
 
   @Post()

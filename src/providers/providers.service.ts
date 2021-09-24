@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProviderDto } from './dto/create-provider.dto';
 import { Provider } from './provider.entity';
 import { Address } from '../address/address.entity';
@@ -12,6 +12,20 @@ export class ProvidersService {
       return provider;
     });
     return providers;
+  }
+
+  async getProviderById(id: number): Promise<Provider> {
+    const provider = await this.findById(id);
+    delete provider.password;
+    return provider;
+  }
+
+  async findById(id: number): Promise<Provider> {
+    const provider = await Provider.findOne(id, { relations: ['address'] });
+    if (!provider) {
+      throw new NotFoundException();
+    }
+    return provider;
   }
 
   async create(createProviderDto: CreateProviderDto): Promise<Provider> {
