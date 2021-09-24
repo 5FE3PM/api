@@ -18,7 +18,6 @@ export class ProvidersController {
 
   @Post()
   create(@Body() createProviderDto: CreateProviderDto) {
-    console.log(createProviderDto);
     return this.providersService.create(createProviderDto);
   }
 }
