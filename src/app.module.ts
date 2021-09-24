@@ -12,6 +12,7 @@ import { AddressModule } from './address/address.module';
 import { User } from './users/user.entity';
 import { Address } from './address/address.entity';
 import { Client } from './clients/client.entity';
+import { ProvidersModule } from './providers/providers.module';
 
 const entities = [User, Address, Client];
 
@@ -34,6 +35,7 @@ const entities = [User, Address, Client];
     AuthModule,
     ClientsModule,
     AddressModule,
+    ProvidersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
