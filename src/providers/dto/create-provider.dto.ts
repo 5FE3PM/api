@@ -1,4 +1,10 @@
-import { IsBoolean, IsEmail, IsString, Length } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class CreateProviderDto {
   @IsString()
@@ -15,8 +21,21 @@ export class CreateProviderDto {
   password: string;
 
   @IsBoolean()
+  @IsOptional()
+  validated: boolean;
+
+  @IsBoolean()
   cash: boolean;
 
   @IsBoolean()
   card: boolean;
+
+  @IsString()
+  street: string;
+
+  @IsString()
+  subdivision: string;
+
+  @IsString()
+  region: string;
 }

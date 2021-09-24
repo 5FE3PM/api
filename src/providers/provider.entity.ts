@@ -1,12 +1,14 @@
 import {
   BaseEntity,
   Column,
+  Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from '../address/address.entity';
 
+@Entity({ name: 'providers' })
 export class Provider extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -27,12 +29,12 @@ export class Provider extends BaseEntity {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: false })
   validated: boolean;
 
   @Column()
   cash: boolean;
 
   @Column()
-  credit: boolean;
+  card: boolean;
 }
