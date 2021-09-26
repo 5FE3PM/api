@@ -13,8 +13,9 @@ import { User } from './users/user.entity';
 import { Address } from './address/address.entity';
 import { Client } from './clients/entities/client.entity';
 import { RegionsModule } from './regions/regions.module';
+import { Region } from './regions/entities/region.entity';
 
-const entities = [User, Address, Client];
+const entities = [User, Address, Client, Region];
 
 @Module({
   imports: [
