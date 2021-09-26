@@ -1,18 +1,16 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 
 export class AddressDto {
   @IsString()
   @IsNotEmpty()
   @Length(3, 80)
-  street: string;
+  firstAddress: string;
 
   @IsString()
   @IsNotEmpty()
   @Length(3, 50)
-  subdivision: string;
+  secondAddress: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Length(3, 40)
-  region: string;
+  @IsNumber()
+  regionId: number;
 }

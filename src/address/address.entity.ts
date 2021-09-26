@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Region } from '../regions/entities/region.entity';
 
 @Entity({ name: 'addresses' })
 export class Address extends BaseEntity {
@@ -6,11 +14,12 @@ export class Address extends BaseEntity {
   id: number;
 
   @Column()
-  street: string;
+  firstAddress: string;
 
   @Column()
-  subdivision: string;
+  secondAddress: string;
 
-  @Column()
-  region: string;
+  @ManyToOne(() => Region, (region) => region.id)
+  @JoinColumn()
+  region: Region;
 }

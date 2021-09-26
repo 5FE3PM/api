@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsEmail,
+  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -31,11 +32,11 @@ export class CreateProviderDto {
   card: boolean;
 
   @IsString()
-  street: string;
+  firstAddress: string;
 
   @IsString()
-  subdivision: string;
+  secondAddress: string;
 
-  @IsString()
-  region: string;
+  @IsNumber()
+  regionId: number;
 }

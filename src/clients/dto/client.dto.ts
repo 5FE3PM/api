@@ -14,11 +14,11 @@ export class ClientDto {
   password: string;
 
   @IsNotEmpty()
-  street: string;
+  firstAddress: string;
 
   @IsNotEmpty()
-  subdivision: string;
+  secondAddress: string;
 
   @IsNotEmpty()
-  region: string;
+  regionId: number;
 }

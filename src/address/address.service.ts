@@ -1,33 +1,47 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AddressDto } from './dto/address.dto';
 import { Address } from './address.entity';
+import { Region } from '../regions/entities/region.entity';
+import { UpdateAddressDto } from './dto/update-address.dto';
 
 @Injectable()
 export class AddressService {
   async create(addressDto: AddressDto): Promise<Address> {
-    const address = Address.create(addressDto);
+    const region = await Region.findOne(Number(addressDto.regionId));
+    if (!region) {
+      throw new NotFoundException(`Region not found`);
+    }
+    const address = Address.create({
+      firstAddress: addressDto.firstAddress,
+      secondAddress: addressDto.secondAddress,
+      region,
+    });
     await address.save();
     return address;
   }
 
   async getAllAddress(): Promise<Address[]> {
-    const addresses = await Address.find();
+    const addresses = await Address.find({ relations: ['region'] });
     return addresses;
   }
 
   async getById(id: number): Promise<Address> {
-    const address = await Address.findOne(id);
+    const address = await Address.findOne(id, { relations: ['region'] });
     if (!address) {
       throw new NotFoundException(`Address with ID "${id}" not found`);
     }
     return address;
   }
 
-  async update(id: number, addressDto: AddressDto): Promise<Address> {
+  async update(id: number, addressDto: UpdateAddressDto): Promise<Address> {
+    const region = await Region.findOne(Number(addressDto.regionId));
+    if (!region) {
+      throw new NotFoundException(`Region not found`);
+    }
     const address = await Address.findOne(id);
-    address.street = addressDto.street;
-    address.subdivision = addressDto.subdivision;
-    address.region = addressDto.region;
+    address.firstAddress = addressDto.firstAddress;
+    address.secondAddress = addressDto.secondAddress;
+    address.region = region;
     await address.save();
     return address;
   }

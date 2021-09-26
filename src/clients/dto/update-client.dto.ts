@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsEmail,
+  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -25,13 +26,13 @@ export class UpdateClientDto {
 
   @IsString()
   @IsOptional()
-  street: string;
+  firstAddress: string;
 
   @IsString()
   @IsOptional()
-  subdivision: string;
+  secondAddress: string;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  region: string;
+  regionId: number;
 }

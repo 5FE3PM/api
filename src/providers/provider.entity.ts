@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -7,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from '../address/address.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Entity({ name: 'providers' })
 export class Provider extends BaseEntity {
@@ -37,4 +39,13 @@ export class Provider extends BaseEntity {
 
   @Column()
   card: boolean;
+
+  @BeforeInsert()
+  async hashPassword(): Promise<void> {
+    this.password = await bcrypt.hash(this.password, 8);
+  }
+
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+  }
 }

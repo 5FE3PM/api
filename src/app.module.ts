@@ -7,15 +7,21 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ClientsModule } from './clients/clients.module';
 import { AddressModule } from './address/address.module';
+import { ProvidersModule } from './providers/providers.module';
+import { RegionsModule } from './regions/regions.module';
+import { CategoriesModule } from './categories/categories.module';
+import { BusinessModule } from './business/business.module';
 
 // Entities
 import { User } from './users/user.entity';
 import { Address } from './address/address.entity';
+import { Region } from './regions/entities/region.entity';
 import { Client } from './clients/client.entity';
-import { ProvidersModule } from './providers/providers.module';
 import { Provider } from './providers/provider.entity';
+import { Business } from './business/business.entity';
+import { Category } from './categories/entities/category.entity';
 
-const entities = [User, Address, Client, Provider];
+const entities = [User, Address, Region, Client, Provider, Business, Category];
 
 @Module({
   imports: [
@@ -37,6 +43,9 @@ const entities = [User, Address, Client, Provider];
     ClientsModule,
     AddressModule,
     ProvidersModule,
+    BusinessModule,
+    CategoriesModule,
+    RegionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

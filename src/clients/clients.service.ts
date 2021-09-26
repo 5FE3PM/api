@@ -3,11 +3,21 @@ import { Address } from 'src/address/address.entity';
 import { Client } from './client.entity';
 import { ClientDto } from './dto/client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { AddressService } from '../address/address.service';
+import { RegionsService } from '../regions/regions.service';
 
 @Injectable()
 export class ClientsService {
+  constructor(
+    private addressService: AddressService,
+    private regionsService: RegionsService,
+  ) {}
+
   async getAllClients(): Promise<Client[]> {
-    let clients = await Client.find({ relations: ['address'] });
+    let clients = await Client.createQueryBuilder('client')
+      .leftJoinAndSelect('client.address', 'address')
+      .leftJoinAndSelect('address.region', 'region')
+      .getMany();
     clients = clients.map((client: Client) => {
       delete client.password;
       return client;
@@ -22,13 +32,14 @@ export class ClientsService {
   }
 
   async create(clientDto: ClientDto): Promise<Client> {
-    const clientAddress = Address.create({
-      street: clientDto.street,
-      subdivision: clientDto.subdivision,
-      region: clientDto.region,
+    const region = await this.regionsService.findById(clientDto.regionId);
+    const address = Address.create({
+      firstAddress: clientDto.firstAddress,
+      secondAddress: clientDto.secondAddress,
+      region,
     });
-    await clientAddress.save();
-    const client = Client.create({ ...clientDto, address: clientAddress });
+    await address.save();
+    const client = Client.create({ ...clientDto, address });
     await client.save();
     delete client.password;
     return client;
@@ -37,12 +48,22 @@ export class ClientsService {
   async update(id: number, updateClientDto: UpdateClientDto): Promise<Client> {
     const client = await this.findById(id);
 
-    // find the address to update
-    const address = await Address.findOne(client.address.id);
-    address.street = updateClientDto.street;
-    address.subdivision = updateClientDto.subdivision;
-    address.region = updateClientDto.region;
-    await address.save();
+    if (updateClientDto.regionId) {
+      // find the region to update the address with the new one
+      const region = await this.regionsService.findById(
+        Number(updateClientDto.regionId),
+      );
+
+      // find the address to update
+      const address = await this.addressService.getById(
+        Number(client.address.id),
+      );
+
+      address.firstAddress = updateClientDto.firstAddress;
+      address.secondAddress = updateClientDto.secondAddress;
+      address.region = region;
+      await address.save();
+    }
 
     // update the client
     client.fullname = updateClientDto.fullname;
@@ -53,11 +74,23 @@ export class ClientsService {
     return await this.findById(id);
   }
 
+  async delete(id: number): Promise<{ message: string }> {
+    const client = await this.findById(id);
+    await Client.delete(client);
+    return {
+      message: 'Client deleted',
+    };
+  }
+
   private async findById(id: number): Promise<Client> {
     // find the client to get the address id
-    const client = await Client.findOne(id, { relations: ['address'] });
+    const client = await Client.createQueryBuilder('client')
+      .leftJoinAndSelect('client.address', 'address')
+      .leftJoinAndSelect('address.region', 'region')
+      .where('client.id = :id', { id })
+      .getOne();
 
-    // if user was not found, then throw a not found exception
+    // if client was not found, then throw a not found exception
     if (!client) {
       throw new NotFoundException(`Client with id ${id} not found`);
     }
@@ -65,11 +98,18 @@ export class ClientsService {
     return client;
   }
 
-  async delete(id: number): Promise<{ message: string }> {
-    const client = await this.findById(id);
-    await Client.delete(client);
-    return {
-      message: 'Client deleted',
-    };
+  async findByEmail(email: string): Promise<Client> {
+    const client = await Client.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    // if user was not found, then throw a not found exception
+    if (!client) {
+      throw new NotFoundException(`Email not registered`);
+    }
+
+    return client;
   }
 }
