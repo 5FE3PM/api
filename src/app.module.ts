@@ -11,7 +11,8 @@ import { AddressModule } from './address/address.module';
 // Entities
 import { User } from './users/user.entity';
 import { Address } from './address/address.entity';
-import { Client } from './clients/client.entity';
+import { Client } from './clients/entities/client.entity';
+import { RegionsModule } from './regions/regions.module';
 
 const entities = [User, Address, Client];
 
@@ -34,6 +35,7 @@ const entities = [User, Address, Client];
     AuthModule,
     ClientsModule,
     AddressModule,
+    RegionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
