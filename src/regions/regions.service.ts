@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
+import { Region } from './entities/region.entity';
 
 @Injectable()
 export class RegionsService {
-  create(createRegionDto: CreateRegionDto) {
-    return 'This action adds a new region';
+  async create(createRegionDto: CreateRegionDto): Promise<Region> {
+    const region = Region.create(createRegionDto);
+    await region.save();
+    return region;
   }
 
   findAll() {
