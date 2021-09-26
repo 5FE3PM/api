@@ -34,9 +34,4 @@ export class RegionsController {
   update(@Param('id') id: string, @Body() updateRegionDto: UpdateRegionDto) {
     return this.regionsService.update(+id, updateRegionDto);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.regionsService.remove(+id);
-  }
 }

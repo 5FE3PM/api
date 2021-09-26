@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
 import { Region } from './entities/region.entity';
@@ -6,24 +11,48 @@ import { Region } from './entities/region.entity';
 @Injectable()
 export class RegionsService {
   async create(createRegionDto: CreateRegionDto): Promise<Region> {
-    const region = Region.create(createRegionDto);
-    await region.save();
+    try {
+      const region = Region.create(createRegionDto);
+      await region.save();
+      return region;
+    } catch (error) {
+      if (error.errno === 1062) {
+        throw new ConflictException(`That region already exists`);
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
+
+  async findAll(): Promise<Region[]> {
+    const regions = await Region.find();
+    return regions;
+  }
+
+  async findOne(id: number): Promise<Region> {
+    return await this.findById(id);
+  }
+
+  async update(id: number, updateRegionDto: UpdateRegionDto): Promise<Region> {
+    try {
+      const region = await this.findById(id);
+      region.name = updateRegionDto.name;
+      await region.save();
+      return region;
+    } catch (error) {
+      if (error.errno === 1062) {
+        throw new ConflictException(`That region already exists`);
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
+
+  async findById(id: number): Promise<Region> {
+    const region = await Region.findOne(id);
+    if (!region) {
+      throw new NotFoundException(`Region not found`);
+    }
     return region;
-  }
-
-  findAll() {
-    return `This action returns all regions`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} region`;
-  }
-
-  update(id: number, updateRegionDto: UpdateRegionDto) {
-    return `This action updates a #${id} region`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} region`;
   }
 }
